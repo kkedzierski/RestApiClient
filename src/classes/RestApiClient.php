@@ -85,8 +85,29 @@ class RestApiClient{
         $this->addToHeader("Authorization", "token $token");
     }
 
-    public function get(string $resource = '/', string $parameterValue = '', ?array $additionalField = null): string{
-    
+    private function getStatusCode(CurlHandle $curlHandle, ?array $data = null): string{
+        $statusCode = curl_getinfo($curlHandle, CURLINFO_RESPONSE_CODE);
+        switch ($statusCode) {
+            case 200:
+                return "Success";
+            case 201:
+                return "Request POST sended";
+            case 404:
+                return "Page do not exists";
+            case 422:
+                print_r($data) ?? null;
+                return "InvalidData";
+            default:
+                return "Unexpected status code: $statusCode";
+        }
+    }
+
+    private function prepareRequestURL(
+        string $resource = '/', 
+        string $parameterValue = '',
+        ?array $additionalField = null
+    ): string{
+
         if(!$resource || $resource[0] !== "/"){
             throw new Exception("First parametr must start with /");
         }
@@ -94,14 +115,6 @@ class RestApiClient{
         if($resource[-1] === '/'){
             $resource = substr($resource, 0, -1);
         }
-
-        if(strpos($resource, ':') && $parameterValue){
-            $resource = addParametrToUrl($resource, $parameterValue);
-        }
-        
-        $ch = $this->getCurlHandle();
-        curl_setopt($ch, CURLOPT_URL, $this->apiURL . $resource);
-
         if($additionalField){
             foreach($additionalField as $key => $value){
                 if(strtolower($key) === 'header'){
@@ -115,12 +128,84 @@ class RestApiClient{
             }
         }
 
+        if(strpos($resource, ':') && $parameterValue){
+            $resource = addParametrToUrl($resource, $parameterValue);
+        }
+
+        return $resource;
+    }
+
+    private function executeRequest(string $type, string $resource, ?array $data = null):array{
+
+        $type = strtoupper($type);
+
+        $ch = $this->getCurlHandle();
+        curl_setopt($ch, CURLOPT_URL, $this->apiURL . $resource);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+
+        switch ($type){
+            case "POST":
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                break;
+            case "PATCH":
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                break;
+            case "DELETE":
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                break;
+            default:
+                throw new Exception("Method $type is not allowed");            
+        }
 
         $response = curl_exec($ch);
         curl_close($ch);
 
-        return $response;
-        
+        $data = json_decode($response, true);
+
+        echo $this->getStatusCode($ch);
+
+        return $data;
     }
+
+    public function get(string $resource = '/', string $parameterValue = '', ?array $additionalField = null): array{
+    
+        $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
+        $response = $this->executeRequest("GET", $resource);
+        
+        return $response;
+    }
+
+    public function post(string $resource = '/', array $postData, ?array $additionalField = null){
+            
+        $resource = $this->prepareRequestURL($resource, '', $additionalField);
+        $response = $this->executeRequest("POST", $resource, $postData);
+
+        return $response;
+
+    }
+
+    public function patch(
+        string $resource = '/', 
+        string $parameterValue = '',
+        array $updateData, 
+        ?array $additionalField = null){
+
+        $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
+        $response = $this->executeRequest("PATCH", $resource, $updateData);
+        
+        return $response;
+    }
+
+    public function delete(
+        string $resource = '/', 
+        string $parameterValue = '',
+        ?array $additionalField = null){
+
+        $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
+        $response = $this->executeRequest("DELETE", $resource);
+        
+        return $response;
+    }
+    
 }
