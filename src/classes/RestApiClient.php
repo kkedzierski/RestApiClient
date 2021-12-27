@@ -9,7 +9,7 @@ class RestApiClient
     private string $apiURL;
     private string $authType;
     private CurlHandle $curlHandle;
-    private ?RestApiHeader $header = null;
+    private ?array $header = null;
 
     /**
      * Initialize API URL and set curl handle
@@ -47,13 +47,7 @@ class RestApiClient
         return $this->curlHandle;
     }
 
-    private function setHeader()
-    {
-        $this->header = new RestApiHeader();
-    }
-
-    private function getHeader(): RestApiHeader|null
-    {
+    public function getHeader(){
         return $this->header;
     }
 
@@ -67,17 +61,13 @@ class RestApiClient
      */
     public function addToHeader(string $headerType, string $headerValue): void
     {
-        if (!$this->curlHandle) {
-            throw new Exception("Curl Handle instance is not created");
+        if(empty($headerType) || empty($headerValue) ){
+            throw new Exception("First and second parameter cannot be empty");
         }
-        if (!$this->getHeader()) {
-            $this->setHeader();
-        }
-        $headerObj = $this->getHeader();
-        $header = $headerObj
-            ->addProperty($headerType, $headerValue)
-            ->getHeader();
-        curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $header);
+        
+        $this->header[] = "$headerType: $headerValue";
+        curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $this->header);
+
     }
 
     /**
@@ -97,16 +87,16 @@ class RestApiClient
         $statusCode = curl_getinfo($curlHandle, CURLINFO_RESPONSE_CODE);
         switch ($statusCode) {
             case 200:
-                return "Success";
+                return "Response with code $statusCode Success";
             case 201:
-                return "Request POST sended";
+                return "Response with code $statusCode Created";
             case 404:
-                return "Page do not exists";
+                return "Response with code $statusCode Page do not exists";
             case 422:
                 print_r($data) ?? null;
-                return "InvalidData";
+                return "Response with code $statusCode InvalidData";
             default:
-                return "Unexpected status code: $statusCode";
+                return "Response with code $statusCode Unexpected status";
         }
     }
 
