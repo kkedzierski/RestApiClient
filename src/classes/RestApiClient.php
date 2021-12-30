@@ -1,7 +1,9 @@
 <?php
+namespace RestApiClient\classes;
 
-include_once "RestApiHeader.php";
-include_once "helpers/helpers.php";
+
+use \Exception, \CurlHandle;
+
 
 class RestApiClient
 {
@@ -51,6 +53,23 @@ class RestApiClient
         return $this->header;
     }
 
+    public function getHeaderLine(string $searchType): string{
+        if(!$this->header){
+            throw new Exception("Header is empty");
+        }
+        foreach($this->header as $headerLine){
+            $headerTypeValueArray = explode(": ", $headerLine);
+            $headerType = $headerTypeValueArray[0];
+            $headerValue = $headerTypeValueArray[1];
+            if(strtolower($headerType) === strtolower($searchType)){
+                return $headerValue;
+            }
+        }
+
+        return "Not found $searchType";
+    }
+
+
     /**
      * Add header property type => value
      *
@@ -80,24 +99,6 @@ class RestApiClient
     public function setToken(string $token): void
     {
         $this->addToHeader("Authorization", "token $token");
-    }
-
-    private function getStatusCode(CurlHandle $curlHandle, ?array $data = null): string
-    {
-        $statusCode = curl_getinfo($curlHandle, CURLINFO_RESPONSE_CODE);
-        switch ($statusCode) {
-            case 200:
-                return "Response with code $statusCode Success";
-            case 201:
-                return "Response with code $statusCode Created";
-            case 404:
-                return "Response with code $statusCode Page do not exists";
-            case 422:
-                print_r($data) ?? null;
-                return "Response with code $statusCode InvalidData";
-            default:
-                return "Response with code $statusCode Unexpected status";
-        }
     }
 
     private function prepareRequestURL(
@@ -133,7 +134,7 @@ class RestApiClient
         return $resource;
     }
 
-    private function executeRequest(string $type, string $resource, ?array $data = null): array
+    private function executeRequest(string $type, string $resource, ?array $data = null): RestApiResponse
     {
 
         $type = strtoupper($type);
@@ -143,6 +144,8 @@ class RestApiClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         switch ($type) {
+            case "GET":
+                break;
             case "POST":
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
                 break;
@@ -162,10 +165,10 @@ class RestApiClient
 
         $data = json_decode($response, true);
 
-        echo $this->getStatusCode($ch);
-
-        return $data;
+        $responseObj = new RestApiResponse($ch, $data);
+        return $responseObj;
     }
+
 
     /**
      * Send GET request
@@ -174,13 +177,13 @@ class RestApiClient
      * @param string  $parameterValue parametr required if is specific in resource , default = ''
      * @param array   $additionalField ex. header, default = null
      * 
-     * @return array response
+     * @return RestApiResponse response
      */
     public function get(
         string $resource = '/',
         string $parameterValue = '',
         ?array $additionalField = null
-    ): array {
+    ): RestApiResponse {
 
         $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
         $response = $this->executeRequest("GET", $resource);

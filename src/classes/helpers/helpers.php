@@ -1,5 +1,6 @@
 <?php
 
+namespace RestApiClient\Classes;
 
 /**
  * Replace parametr after : sign with given parameterValue
