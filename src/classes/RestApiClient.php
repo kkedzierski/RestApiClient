@@ -1,5 +1,6 @@
 <?php
-namespace RestApiClient\classes;
+namespace RestApiClient\Classes;
+use RestApiClient\Classes\Helpers\Helpers;
 
 
 use \Exception, \CurlHandle;
@@ -9,7 +10,6 @@ class RestApiClient
 {
 
     private string $apiURL;
-    private string $authType;
     private CurlHandle $curlHandle;
     private ?array $header = null;
 
@@ -17,17 +17,15 @@ class RestApiClient
      * Initialize API URL and set curl handle
      *
      * @param string  $apiURL 
-     * @param string  $authType type of authentication, default = "basic"
      * 
      * @return void
      */
-    public function __construct(string $apiURL, string $authType = "basic")
+    public function __construct(string $apiURL)
     {
         if ($apiURL[-1] === '/') {
             $apiURL = substr($apiURL, 0, -1);
         }
         $this->apiURL = $apiURL;
-        $this->authType = $authType;
 
         $this->setCurlHandle($this->apiURL);
     }
@@ -60,7 +58,7 @@ class RestApiClient
         foreach($this->header as $headerLine){
             $headerTypeValueArray = explode(": ", $headerLine);
             $headerType = $headerTypeValueArray[0];
-            $headerValue = $headerTypeValueArray[1];
+            $headerValue = $headerTypeValueArray[1] || '';
             if(strtolower($headerType) === strtolower($searchType)){
                 return $headerValue;
             }
@@ -87,18 +85,6 @@ class RestApiClient
         $this->header[] = "$headerType: $headerValue";
         curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $this->header);
 
-    }
-
-    /**
-     * Add Authentication token to header
-     *
-     * @param string  $token
-     * 
-     * @return void
-     */
-    public function setToken(string $token): void
-    {
-        $this->addToHeader("Authorization", "token $token");
     }
 
     private function prepareRequestURL(
@@ -128,7 +114,7 @@ class RestApiClient
         }
 
         if (strpos($resource, ':') && $parameterValue) {
-            $resource = addParametrToUrl($resource, $parameterValue);
+            $resource = Helpers::addParametrToUrl($resource, $parameterValue);
         }
 
         return $resource;
@@ -142,6 +128,7 @@ class RestApiClient
         $ch = $this->getCurlHandle();
         curl_setopt($ch, CURLOPT_URL, $this->apiURL . $resource);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
         switch ($type) {
             case "GET":
@@ -163,9 +150,8 @@ class RestApiClient
         $response = curl_exec($ch);
         curl_close($ch);
 
-        $data = json_decode($response, true);
-
-        $responseObj = new RestApiResponse($ch, $data);
+        $responseObj = new RestApiResponse($ch, $response);
+        
         return $responseObj;
     }
 
