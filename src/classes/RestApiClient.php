@@ -12,7 +12,7 @@ class RestApiClient
 
     private string $apiURL;
     private CurlHandle $curlHandle;
-    private ?array $header = null;
+    private array $header = [];
 
     /**
      * Initialize API URL and set curl handle
@@ -82,8 +82,9 @@ class RestApiClient
         if(empty($headerType) || empty($headerValue) ){
             throw new Exception("First and second parameter cannot be empty");
         }
-        
-        $this->header[] = "$headerType: $headerValue";
+        if(!in_array("$headerType: $headerValue", $this->header)){
+            $this->header[] = "$headerType: $headerValue";
+        }
         curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $this->header);
 
     }
