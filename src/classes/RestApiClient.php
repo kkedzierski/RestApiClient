@@ -10,32 +10,32 @@ use RestApiClient\classes\RestApiResponse;
 class RestApiClient
 {
 
-    private string $apiURL;
+    private string $baseURI;
     private CurlHandle $curlHandle;
     private array $header = [];
     private string $url;
 
     /**
-     * Initialize API URL and set curl handle
+     * Initialize base URI and curl handle
      *
-     * @param string  $apiURL 
+     * @param string  $base URI 
      * 
      * @return void
      */
-    public function __construct(string $apiURL)
+    public function __construct(string $baseURI)
     {
-        if ($apiURL[-1] === '/') {
-            $apiURL = substr($apiURL, 0, -1);
+        if ($baseURI[-1] === '/') {
+            $baseURI = substr($baseURI, 0, -1);
         }
-        $this->apiURL = $apiURL;
+        $this->baseURI = $baseURI;
 
-        $this->setCurlHandle($this->apiURL);
+        $this->setCurlHandle($this->baseURI);
     }
 
-    private function setCurlHandle(string $apiUrl): void
+    private function setCurlHandle(string $baseURI): void
     {
         try {
-            $this->curlHandle = curl_init($apiUrl);
+            $this->curlHandle = curl_init($baseURI);
         } catch (Exception $e) {
             echo "Error for create Curl Handle instance: $e->getMessage()";
         }
@@ -138,7 +138,7 @@ class RestApiClient
         $type = strtoupper($type);
 
         $ch = $this->getCurlHandle();
-        $this->setUrl($this->apiURL . $resource);
+        $this->setUrl($this->baseURI . $resource);
         
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -152,6 +152,10 @@ class RestApiClient
                 break;
             case "PATCH":
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                break;
+            case "PUT":
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
                 break;
             case "DELETE":
@@ -232,6 +236,29 @@ class RestApiClient
 
         $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
         $response = $this->executeRequest("PATCH", $resource, $updateData);
+
+        return $response;
+    }
+
+    /**
+     * Send PUT request
+     *
+     * @param string  $resource must start with "/" ex. /products or /products/:id
+     * @param string  $parameterValue parametr required if is specific in resource , default = ''
+     * @param array   $updateData data to update
+     * @param array   $additionalField ex. header, default = null
+     * 
+     * @return RestApiResponse response
+     */
+    public function put(
+        string $resource = '/',
+        string|int $parameterValue = '',
+        array $updateData,
+        ?array $additionalField = null
+    ): RestApiResponse {
+
+        $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
+        $response = $this->executeRequest("PUT", $resource, $updateData);
 
         return $response;
     }
