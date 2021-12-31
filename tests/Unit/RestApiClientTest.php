@@ -82,7 +82,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
      */   
     public function is_request_method_return_response_object(
         string $method,
@@ -95,7 +95,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
     */   
     public function is_request_return_response_object_with_status_code(
         string $method,
@@ -108,7 +108,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
     */  
     public function is_request_return_response_object_with_body(
         string $method,
@@ -121,7 +121,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
     */ 
     public function is_request_return_response_object_with_header(
         string $method,
@@ -134,7 +134,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
     */ 
     public function is_request_return_response_object_with_URL(
         string $method,
@@ -147,7 +147,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsInvalidParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsInvalidParams
     */ 
     public function is_throw_first_charater_is_not_backslash_exception_in_resource_argument(
         string $method,
@@ -160,7 +160,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParams
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
     */ 
     public function is_remove_last_backslash_from_resource(
         string $method,
@@ -173,7 +173,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParamsWithParameterValue
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParamsWithParameterValue
     */ 
     public function is_add_to_resource_parametr_value(
         string $method,
@@ -186,7 +186,7 @@ class RestApiClientTest extends TestCase
 
     /** 
      * @test 
-     * @dataProvider RestApiClientMethodsParamsWithAdditionalFieldHeader
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParamsWithAdditionalFieldHeader
     */ 
     public function is_add_to_header_from_additional_fields_argument_array(
         string $method,
@@ -198,44 +198,4 @@ class RestApiClientTest extends TestCase
         $this->assertEquals('Value', $this->restApiClient->getHeaderLine('type'));
     }
 
-    public function RestApiClientMethodsParams(): array
-    {
-        return [
-            ['GET', '/user/repos/', 'test'],
-            ['POST', '/user/repos/', ['test']],
-            ['PATCH', '/user/repos/', 'test'],
-            ['DELETE', '/user/repos/', 'test']
-
-        ];
-    }
-
-    public function RestApiClientMethodsParamsWithParameterValue(): array
-    {
-        return [
-            ['GET', '/user/:id/repos/', 123],
-            ['PATCH', '/user/:id/repos/', 123],
-            ['DELETE', '/user/:id/repos/', 123]
-        ];
-    }
-
-    public function RestApiClientMethodsParamsWithAdditionalFieldHeader(): array
-    {
-        return [
-            ['GET', '/user/repos/', 'test', ["header" => ["Type: Value"] ] ],
-            ['POST', '/user/repos/', ['test'], ['header' => ["Type: Value"] ] ] ,
-            ['PATCH', '/user/repos/', 'test', ['header' => ["Type: Value"] ] ] ,
-            ['DELETE', '/user/repos/', 'test', ['header' => ["Type: Value"] ] ] 
-        ];
-    }
-
-    public function RestApiClientMethodsInvalidParams(): array
-    {
-        return [
-            ['GET', 'user/repos', 'test'],
-            ['POST', 'user/repos', ['test']],
-            ['PATCH', 'user/repos', 'test'],
-            ['DELETE', 'user/repos', 'test']
-
-        ];
-    }
 }
