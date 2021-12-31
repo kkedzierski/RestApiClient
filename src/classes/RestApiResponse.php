@@ -75,7 +75,7 @@ class RestApiResponse{
             throw new Exception("Header is empty");
         }
         $headerArray = preg_split("/\r\n|\n|\r/", $this->getHeader());
-        if(strtolower($searchType) === strtolower("http")){
+        if(strtolower($searchType) === "http"){
             return $headerArray[0];
         }
         foreach($headerArray as $headerLine){
