@@ -1,7 +1,12 @@
 {
-    "autoload-dev": {
+    "autoload": {
         "psr-4": {
             "RestApiClient\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "require-dev": {
