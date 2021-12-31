@@ -62,7 +62,7 @@ class RestApiClientTest extends TestCase
     public function is_add_to_header(): void{
         $RAC = new RestApiClient("https://api.github.com");
         $RAC->addToHeader("Type", "Value");
-        $this->assertEquals(["Type: Value"], $RAC->getHeader());
+        $this->assertSame(["Type: Value"], $RAC->getHeader());
     }
 
     /** @test */
@@ -70,14 +70,14 @@ class RestApiClientTest extends TestCase
         $RAC = new RestApiClient("https://api.github.com");
         $RAC->addToHeader("Type", "Value");
         $RAC->addToHeader("Type", "Value");
-        $this->assertNotEquals(["Type: Value", "Type: Value"], $RAC->getHeader());
+        $this->assertNotSame(["Type: Value", "Type: Value"], $RAC->getHeader());
     }
 
     /** @test */
     public function is_get_header_line_return_correct_value(): void{
         $RAC = new RestApiClient("https://api.github.com");
         $RAC->addToHeader("Type", "Value");
-        $this->assertEquals("Value", $RAC->getHeaderLine("type"));
+        $this->assertSame("Value", $RAC->getHeaderLine("type"));
     }
 
     /** 
@@ -168,7 +168,7 @@ class RestApiClientTest extends TestCase
         string|array $data
     ): void{
         $response = $this->executeRequestsForAllMethods($method, $resource, $data);
-        $this->assertNotEquals('/', $response->getUrl()[-1]);
+        $this->assertNotSame('/', $response->getUrl()[-1]);
     }
 
     /** 
@@ -181,7 +181,7 @@ class RestApiClientTest extends TestCase
         string|int $parameterValue
     ): void{
         $this->executeRequestsForAllMethods($method, $resource, $parameterValue);
-        $this->assertEquals('https://api.github.com/user/123/repos', $this->restApiClient->getUrl());
+        $this->assertSame('https://api.github.com/user/123/repos', $this->restApiClient->getUrl());
     }
 
     /** 
@@ -195,7 +195,7 @@ class RestApiClientTest extends TestCase
         array $additonalFields
     ): void{
         $this->executeRequestsForAllMethods($method, $resource, $data, $additonalFields);
-        $this->assertEquals('Value', $this->restApiClient->getHeaderLine('type'));
+        $this->assertSame('Value', $this->restApiClient->getHeaderLine('type'));
     }
 
 }
