@@ -14,7 +14,7 @@ class RestApiClientTest extends TestCase
     {
         $apiUrl = "https://api.github.com";
         $headerArray = ["User-Agent: Test REST API Client", 
-        "Authorization: token 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"];
+        "Authorization: token token_api"];
         $this->setRestApiClientData($apiUrl, $headerArray);
     }
 
