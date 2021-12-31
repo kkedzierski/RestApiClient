@@ -20,7 +20,7 @@ class Helpers{
             if($lastBackSlashIndex < $colonIndex){
                 $resource = substr($resource, 0, $colonIndex) . $parameterValue;
             }else{
-                $resource = substr($resource, 0, $colonIndex) . $parameterValue . substr($resource, $lastBackSlashIndex, -1);
+                $resource = substr($resource, 0, $colonIndex) . $parameterValue . substr($resource, $lastBackSlashIndex);
             }
 
         }
