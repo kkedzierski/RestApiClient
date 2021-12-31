@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use RestApiClient\classes\RestApiClient;
 use PHPUnit\Framework\TestCase;
+use RestApiClient\classes\RestApiResponse;
 
 class RestApiClientTest extends TestCase
 {   
@@ -28,11 +29,6 @@ class RestApiClientTest extends TestCase
         $this->restApiClient = $restApiClient;
     }
 
-    private function getRestApiClient(): RestApiClient{
- 
-        return $this->restApiClient;
-    }
-
     /** @test */
     public function is_add_to_header(): void{
         $RAC = new RestApiClient("https://api.github.com");
@@ -41,31 +37,35 @@ class RestApiClientTest extends TestCase
     }
 
     /** @test */   
-    public function is_request_return_status_code(): void{
-        $RAC = $this->getRestApiClient();
-        $response = $RAC->get('/user/repos');
+    public function is_request_get_method_return_response_object(): void{
+        $response = $this->restApiClient->post('/user/repos',['test']);
+        $responseObj = new RestApiResponse(curl_init("https://api.github.com"),null);
+        $this->assertInstanceOf(get_class($responseObj), $response);
+    }
 
+    /** @test */   
+    public function is_request_return_status_code(): void{
+        $response = $this->restApiClient->get('/user/repos');
         $this->assertIsInt($response->getStatusCode());
     }
 
+     
+
     /** @test */
     public function is_get_request_return_body_content(): void{
-        $RAC = $this->getRestApiClient();
-        $response = $RAC->get('/user/repos');
+        $response = $this->restApiClient->get('/user/reposds');
         $this->assertNotNull($response->getContent());
     }
 
     /** @test */
     public function is_get_request_return_response_with_header(): void{
-        $RAC = $this->getRestApiClient();
-        $response = $RAC->get('/user/repos');
+        $response = $this->restApiClient->get('/user/repos');
         $this->assertNotNull($response->getHeader());
     }
 
     /** @test */
     public function is_get_request_return_response_with_URL(): void{
-        $RAC = $this->getRestApiClient();
-        $response = $RAC->get('/user/repos');
+        $response = $this->restApiClient->get('/user/repos');
         $this->assertNotNull($response->getUrl());
     }
 }
