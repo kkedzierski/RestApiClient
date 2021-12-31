@@ -4,7 +4,8 @@ use RestApiClient\Classes\Helpers\Helpers;
 
 
 use \Exception, \CurlHandle;
-
+use RestApiClient\classes\RestApiRequest;
+use RestApiClient\classes\RestApiResponse;
 
 class RestApiClient
 {
@@ -184,9 +185,9 @@ class RestApiClient
      * @param array   $postData data to send
      * @param array   $additionalField ex. header, default = null
      * 
-     * @return array response
+     * @return RestApiResponse response
      */
-    public function post(string $resource = '/', array $postData, ?array $additionalField = null)
+    public function post(string $resource = '/', array $postData, ?array $additionalField = null): RestApiResponse
     {
 
         $resource = $this->prepareRequestURL($resource, '', $additionalField);
@@ -203,14 +204,14 @@ class RestApiClient
      * @param array   $updateData data to update
      * @param array   $additionalField ex. header, default = null
      * 
-     * @return array response
+     * @return RestApiResponse response
      */
     public function patch(
         string $resource = '/',
         string $parameterValue = '',
         array $updateData,
         ?array $additionalField = null
-    ) {
+    ): RestApiResponse {
 
         $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
         $response = $this->executeRequest("PATCH", $resource, $updateData);
@@ -225,13 +226,13 @@ class RestApiClient
      * @param string  $parameterValue parametr required if is specific in resource , default = ''
      * @param array   $additionalField ex. header
      * 
-     * @return array response
+     * @return RestApiResponse response
      */
     public function delete(
         string $resource = '/',
         string $parameterValue = '',
         ?array $additionalField = null
-    ) {
+    ): RestApiResponse {
 
         $resource = $this->prepareRequestURL($resource, $parameterValue, $additionalField);
         $response = $this->executeRequest("DELETE", $resource);
