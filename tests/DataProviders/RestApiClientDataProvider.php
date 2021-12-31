@@ -10,6 +10,7 @@ class RestApiClientDataProvider{
             ['GET', '/user/repos/', 'test'],
             ['POST', '/user/repos/', ['test']],
             ['PATCH', '/user/repos/', 'test'],
+            ['PUT', '/user/repos/', 'test'],
             ['DELETE', '/user/repos/', 'test']
 
         ];
@@ -20,6 +21,7 @@ class RestApiClientDataProvider{
         return [
             ['GET', '/user/:id/repos/', 123],
             ['PATCH', '/user/:id/repos/', 123],
+            ['PUT', '/user/:id/repos/', 123],
             ['DELETE', '/user/:id/repos/', 123]
         ];
     }
@@ -30,6 +32,7 @@ class RestApiClientDataProvider{
             ['GET', '/user/repos/', 'test', ["header" => ["Type: Value"] ] ],
             ['POST', '/user/repos/', ['test'], ['header' => ["Type: Value"] ] ] ,
             ['PATCH', '/user/repos/', 'test', ['header' => ["Type: Value"] ] ] ,
+            ['PUT', '/user/repos/', 'test', ['header' => ["Type: Value"] ] ] ,
             ['DELETE', '/user/repos/', 'test', ['header' => ["Type: Value"] ] ] 
         ];
     }
@@ -40,6 +43,7 @@ class RestApiClientDataProvider{
             ['GET', 'user/repos', 'test'],
             ['POST', 'user/repos', ['test']],
             ['PATCH', 'user/repos', 'test'],
+            ['PUT', 'user/repos', 'test'],
             ['DELETE', 'user/repos', 'test']
 
         ];

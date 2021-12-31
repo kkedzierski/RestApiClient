@@ -48,6 +48,9 @@ class RestApiClientTest extends TestCase
             case 'PATCH':
                 $response = $this->restApiClient->patch($resource, $data, [$data], $additonalFields);
                 break;
+            case 'PUT':
+                $response = $this->restApiClient->put($resource, $data, [$data], $additonalFields);
+                break;
             case 'DELETE':
                 $response = $this->restApiClient->delete($resource, $data, $additonalFields);
                 break;
