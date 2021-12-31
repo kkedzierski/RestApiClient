@@ -3,7 +3,7 @@ namespace RestApiClient\Classes;
 use RestApiClient\Classes\Helpers\Helpers;
 
 
-use \Exception, \CurlHandle;
+use \InvalidArgumentException, \Exception, \CurlHandle;
 use RestApiClient\classes\RestApiRequest;
 use RestApiClient\classes\RestApiResponse;
 
@@ -13,6 +13,7 @@ class RestApiClient
     private string $apiURL;
     private CurlHandle $curlHandle;
     private array $header = [];
+    private string $url;
 
     /**
      * Initialize API URL and set curl handle
@@ -48,6 +49,14 @@ class RestApiClient
         return $this->curlHandle;
     }
 
+    private function setUrl(string $url){
+        $this->url = $url;
+    }
+
+    public function getUrl(): string{
+        return $this->url;
+    }
+
     public function getHeader(){
         return $this->header;
     }
@@ -59,7 +68,8 @@ class RestApiClient
         foreach($this->header as $headerLine){
             $headerTypeValueArray = explode(": ", $headerLine);
             $headerType = $headerTypeValueArray[0];
-            $headerValue = $headerTypeValueArray[1] || '';
+            
+            $headerValue = $headerTypeValueArray[1] ?? '';
             if(strtolower($headerType) === strtolower($searchType)){
                 return $headerValue;
             }
@@ -91,12 +101,12 @@ class RestApiClient
 
     private function prepareRequestURL(
         string $resource = '/',
-        string $parameterValue = '',
+        string|int $parameterValue = '',
         ?array $additionalField = null
     ): string {
 
         if (!$resource || $resource[0] !== "/") {
-            throw new Exception("First parametr must start with /");
+            throw new InvalidArgumentException("First parametr must start with /");
         }
 
         if ($resource[-1] === '/') {
@@ -128,7 +138,9 @@ class RestApiClient
         $type = strtoupper($type);
 
         $ch = $this->getCurlHandle();
-        curl_setopt($ch, CURLOPT_URL, $this->apiURL . $resource);
+        $this->setUrl($this->apiURL . $resource);
+        
+        curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
@@ -146,7 +158,7 @@ class RestApiClient
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
                 break;
             default:
-                throw new Exception("Method $type is not allowed");
+                throw new InvalidArgumentException("Method $type is not allowed");
         }
 
         $response = curl_exec($ch);
@@ -169,7 +181,7 @@ class RestApiClient
      */
     public function get(
         string $resource = '/',
-        string $parameterValue = '',
+        string|int $parameterValue = '',
         ?array $additionalField = null
     ): RestApiResponse {
 
@@ -188,7 +200,11 @@ class RestApiClient
      * 
      * @return RestApiResponse response
      */
-    public function post(string $resource = '/', array $postData, ?array $additionalField = null): RestApiResponse
+    public function post(
+        string $resource = '/', 
+        array $postData,
+        ?array $additionalField = null
+    ): RestApiResponse
     {
 
         $resource = $this->prepareRequestURL($resource, '', $additionalField);
@@ -209,7 +225,7 @@ class RestApiClient
      */
     public function patch(
         string $resource = '/',
-        string $parameterValue = '',
+        string|int $parameterValue = '',
         array $updateData,
         ?array $additionalField = null
     ): RestApiResponse {
@@ -231,7 +247,7 @@ class RestApiClient
      */
     public function delete(
         string $resource = '/',
-        string $parameterValue = '',
+        string|int $parameterValue = '',
         ?array $additionalField = null
     ): RestApiResponse {
 
