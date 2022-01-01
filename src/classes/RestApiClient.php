@@ -4,7 +4,6 @@ use RestApiClient\Classes\Helpers\Helpers;
 
 
 use \InvalidArgumentException, \Exception, \CurlHandle;
-use RestApiClient\classes\RestApiRequest;
 use RestApiClient\classes\RestApiResponse;
 
 class RestApiClient
