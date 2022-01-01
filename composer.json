@@ -1,4 +1,8 @@
 {
+    "name": "kkedzierski/rest-api-client",
+    "description": "Rest Api client library to send HTTP requests and retrive response",
+    "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "RestApiClient\\": "src/"
@@ -11,5 +15,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "9.5"
-    }
+    },
+    "authors": [
+        {
+            "name": "kkedzierski",
+            "email": "kamil.kedzierski@onet.com.pl"
+        }
+    ],
+    "require": {}
 }
