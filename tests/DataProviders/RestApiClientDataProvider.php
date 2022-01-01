@@ -37,6 +37,17 @@ class RestApiClientDataProvider{
         ];
     }
 
+    public function RestApiClientMethodsParamsWithAdditionalFieldFields(): array
+    {
+        return [
+            ['GET', '/user/repos/', 'test', ["fields" => ["Field = TestValue", "Field2 = TestValue2"] ] ],
+            ['POST', '/user/repos/', ['test'], ['fields' => ["Field = TestValue", "Field2 = TestValue2"] ] ] ,
+            ['PATCH', '/user/repos/', 'test', ['fields' => ["Field = TestValue", "Field2 = TestValue2"] ] ] ,
+            ['PUT', '/user/repos/', 'test', ['fields' => ["Field = TestValue", "Field2 = TestValue2"] ] ] ,
+            ['DELETE', '/user/repos/', 'test', ['fields' => ["Field = TestValue", "Field2 = TestValue2"] ] ] 
+        ];
+    }
+
     public function RestApiClientMethodsInvalidParams(): array
     {
         return [

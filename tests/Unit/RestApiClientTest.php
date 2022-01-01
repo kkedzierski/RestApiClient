@@ -201,4 +201,18 @@ class RestApiClientTest extends TestCase
         $this->assertSame('Value', $this->restApiClient->getHeaderLine('type'));
     }
 
+    /** 
+     * @test 
+     * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParamsWithAdditionalFieldFields
+    */ 
+    public function is_add_aditional_fields_from_additional_fields_argument_array(
+        string $method,
+        string $resource,
+        string|array $data,
+        array $additonalFields
+    ): void{
+        $this->executeRequestsForAllMethods($method, $resource, $data, $additonalFields);
+        $this->assertSame('https://api.github.com/user/repos?Field=TestValue&Field2=TestValue2', $this->restApiClient->getUrl());
+    }
+
 }
