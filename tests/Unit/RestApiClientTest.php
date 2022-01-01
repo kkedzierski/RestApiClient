@@ -83,6 +83,13 @@ class RestApiClientTest extends TestCase
         $this->assertSame("Value", $RAC->getHeaderLine("type"));
     }
 
+    /** @test */
+    public function is_throw_first_and_second_argument_is_requried_exception(): void{
+        $this->expectException(\InvalidArgumentException::class);
+        $RAC = new RestApiClient("https://api.github.com");
+        $RAC->addToHeader("", "");
+    }
+
     /** 
      * @test 
      * @dataProvider \Tests\DataProviders\RestApiClientDataProvider::RestApiClientMethodsParams
