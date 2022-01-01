@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use RestApiClient\classes\RestApiClient;
+use RestApiClient\RestApiClient;
 use PHPUnit\Framework\TestCase;
-use RestApiClient\classes\RestApiResponse;
+use RestApiClient\RestApiResponse;
 
 class RestApiClientTest extends TestCase
 {   

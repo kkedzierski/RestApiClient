@@ -1,6 +1,6 @@
 <?php
 
-namespace RestApiClient\Classes\Helpers;
+namespace RestApiClient\Helpers;
 
 
 class Helpers{

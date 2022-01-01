@@ -1,6 +1,6 @@
 <?php
 
-namespace RestApiClient\classes;
+namespace RestApiClient;
 
 use CurlHandle, Exception;
 
