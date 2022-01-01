@@ -1,5 +1,7 @@
 <?php
+
 namespace RestApiClient\Classes;
+
 use RestApiClient\Classes\Helpers\Helpers;
 
 
@@ -17,7 +19,7 @@ class RestApiClient
     /**
      * Initialize base URI and curl handle
      *
-     * @param string  $base URI 
+     * @param string  $baseURI 
      * 
      * @return void
      */
@@ -40,36 +42,39 @@ class RestApiClient
         }
     }
 
-    private function getCurlHandle(): CurlHandle
+    private function setUrl(string $url)
     {
-        if (!$this->curlHandle) {
-            throw new Exception("Curl Handle instance is not created");
-        }
-        return $this->curlHandle;
-    }
-
-    private function setUrl(string $url){
         $this->url = $url;
     }
 
-    public function getUrl(): string{
+    public function getUrl(): string
+    {
         return $this->url;
     }
 
-    public function getHeader(){
+    public function getHeader(): array
+    {
         return $this->header;
     }
 
-    public function getHeaderLine(string $searchType): string{
-        if(!$this->header){
-            throw new Exception("Header is empty");
+    /**
+     * Return header value by given type from argument
+     *
+     * @param string  $searchType 
+     * 
+     * @return string 
+     */
+    public function getHeaderLine(string $searchType): string
+    {
+        if (!$this->header) {
+            return "Header is empty";
         }
-        foreach($this->header as $headerLine){
+        foreach ($this->header as $headerLine) {
             $headerTypeValueArray = explode(": ", $headerLine);
             $headerType = $headerTypeValueArray[0];
-            
+
             $headerValue = $headerTypeValueArray[1] ?? '';
-            if(strtolower($headerType) === strtolower($searchType)){
+            if (strtolower($headerType) === strtolower($searchType)) {
                 return $headerValue;
             }
         }
@@ -85,19 +90,31 @@ class RestApiClient
      * @param string  $headerValue
      * 
      * @return void
+     * 
+     * @throws InvalidArgumentException if first or second argument is empty
      */
     public function addToHeader(string $headerType, string $headerValue): void
     {
-        if(empty($headerType) || empty($headerValue) ){
-            throw new Exception("First and second parameter cannot be empty");
+        if (empty($headerType) || empty($headerValue)) {
+            throw new InvalidArgumentException("First and second argument cannot be empty");
         }
-        if(!in_array("$headerType: $headerValue", $this->header)){
+        if (!in_array("$headerType: $headerValue", $this->header)) {
             $this->header[] = "$headerType: $headerValue";
         }
         curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $this->header);
-
     }
 
+    /**
+     * Prepare resource by adding additional fields from arguments
+     *
+     * @param string        $resource must start with "/" ex. /products, default = '/'
+     * @param string|int    $parameterValue parametr required if is specific in resource , default = ''
+     * @param array|null    $additionalField ex. header, default = null
+     * 
+     * @return string $resource
+     * 
+     * @throws InvalidArgumentException if first argument is not start with /
+     */
     private function prepareRequestURL(
         string $resource = '/',
         string|int $parameterValue = '',
@@ -105,7 +122,7 @@ class RestApiClient
     ): string {
 
         if (!$resource || $resource[0] !== "/") {
-            throw new InvalidArgumentException("First parametr must start with /");
+            throw new InvalidArgumentException("First argument must start with /");
         }
 
         if ($resource[-1] === '/') {
@@ -121,13 +138,13 @@ class RestApiClient
                         }
                     }
                 }
-                if (in_array(strtolower($key), ['fields', 'field'])){
+                if (in_array(strtolower($key), ['fields', 'field'])) {
                     if (is_array($value)) {
-                        if(count($value) === 1){
-                            $this->setUrl($this->url ."?$value");
-                        }else{
-                            for($i = 1; $i <= (count($value) - 1); $i++){
-                                $resource = $resource ."?".$value[0] . "&" . $value[$i];
+                        if (count($value) === 1) {
+                            $this->setUrl($this->url . "?$value");
+                        } else {
+                            for ($i = 1; $i <= (count($value) - 1); $i++) {
+                                $resource = $resource . "?" . $value[0] . "&" . $value[$i];
                                 // preg_replace remove space around "=" sign
                                 $resource = preg_replace("/\s*([\/=])\s*/", "$1", $resource);
                             }
@@ -144,14 +161,25 @@ class RestApiClient
         return $resource;
     }
 
+    /**
+     * Execute request method by given type as argument
+     *
+     * @param string       $type rest API method ex. 'GET", 'POST', 'PUT', 'PATCH', 'DELETE'
+     * @param string       $resource must start with "/" ex. /products 
+     * @param array|null   $data data to send, default = null
+     * 
+     * @return RestApiResponse $response
+     * 
+     * @throws InvalidArgumentException if method by given $type argument is not allowed
+     */
     private function executeRequest(string $type, string $resource, ?array $data = null): RestApiResponse
     {
 
         $type = strtoupper($type);
 
-        $ch = $this->getCurlHandle();
+        $ch = $this->curlHandle;
         $this->setUrl($this->baseURI . $resource);
-        
+
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -181,7 +209,7 @@ class RestApiClient
         curl_close($ch);
 
         $responseObj = new RestApiResponse($ch, $response);
-        
+
         return $responseObj;
     }
 
@@ -193,7 +221,7 @@ class RestApiClient
      * @param string  $parameterValue parametr required if is specific in resource , default = ''
      * @param array   $additionalField ex. header, default = null
      * 
-     * @return RestApiResponse response
+     * @return RestApiResponse $response
      */
     public function get(
         string $resource = '/',
@@ -217,11 +245,10 @@ class RestApiClient
      * @return RestApiResponse response
      */
     public function post(
-        string $resource = '/', 
+        string $resource = '/',
         array $postData,
         ?array $additionalField = null
-    ): RestApiResponse
-    {
+    ): RestApiResponse {
 
         $resource = $this->prepareRequestURL($resource, '', $additionalField);
         $response = $this->executeRequest("POST", $resource, $postData);
