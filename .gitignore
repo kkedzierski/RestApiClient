@@ -1,1 +1,6 @@
-/app/index.php
+/public/index.php
+/vendor/
+composer.lock
+
+/src/classes/RestApiRequest.php
+.phpunit.result.cache
