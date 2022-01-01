@@ -122,6 +122,19 @@ class RestApiClient
                         }
                     }
                 }
+                if (in_array(strtolower($key), ['fields', 'field'])){
+                    if (is_array($value)) {
+                        if(count($value) === 1){
+                            $this->setUrl($this->url ."?$value");
+                        }else{
+                            for($i = 1; $i <= (count($value) - 1); $i++){
+                                $resource = $resource ."?".$value[0] . "&" . $value[$i];
+                                // preg_replace remove space around "=" sign
+                                $resource = preg_replace("/\s*([\/=])\s*/", "$1", $resource);
+                            }
+                        }
+                    }
+                }
             }
         }
 
