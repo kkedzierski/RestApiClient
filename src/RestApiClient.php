@@ -1,12 +1,12 @@
 <?php
 
-namespace RestApiClient\Classes;
+namespace RestApiClient;
 
-use RestApiClient\Classes\Helpers\Helpers;
+use RestApiClient\Helpers\Helpers;
 
 
 use \InvalidArgumentException, \Exception, \CurlHandle;
-use RestApiClient\classes\RestApiResponse;
+use RestApiClient\RestApiResponse;
 
 class RestApiClient
 {
