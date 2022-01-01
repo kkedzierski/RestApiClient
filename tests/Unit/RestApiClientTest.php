@@ -18,7 +18,7 @@ class RestApiClientTest extends TestCase
         "Authorization: token token_api"];
         $this->setRestApiClientData($apiUrl, $headerArray);
 
-        $this->restApiResponseInstance = new RestApiResponse(curl_init("https://api.github.com"),null);
+        $this->restApiResponseInstance = new RestApiResponse(curl_init($apiUrl),null);
     }
 
     private function setRestApiClientData(string $apiURL, array $headerArray = []){
