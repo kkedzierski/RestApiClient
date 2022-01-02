@@ -32,7 +32,8 @@ ex.
 $rac->addToHeader("User-Agent", "Test REST API Client");
 ```
 
-#### To add additonalParamArr like gets or header too you can create array
+#### To add additonal parmeters like gets or header create array
+#### and add this array as an argument to request methods
 ex. array:
 ```
 $additonalParamArr = [
