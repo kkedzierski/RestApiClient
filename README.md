@@ -14,17 +14,23 @@ To use library in another project write in console:
 ### Usage
 
 #### After instalation composer requirements to use library at the top of file write
->use RestApiClient\RestApiClient;
->require_once __DIR__ . './vendor/autoload.php';
+```
+use RestApiClient\RestApiClient;
+require_once __DIR__ . './vendor/autoload.php';
+```
 
 #### create instance of class with base URI
 ex.
-> $RAC = new RestApiClient("https://api.github.com");
+```
+$RAC = new RestApiClient("https://api.github.com");
+```
 
 #### To add to header use addToHeader methods, 
 #### methods take two parameters Type and Value
 ex.
-> $rac->addToHeader("User-Agent", "Test REST API Client");
+```
+$rac->addToHeader("User-Agent", "Test REST API Client");
+```
 
 #### To add additonalParamArr like gets or header too you can create array
 ex. array:
@@ -37,11 +43,15 @@ $additonalParamArr = [
 ```
 #### To make HTTP Request use methods get, post, put, patch, delete
 ex. 
-> $response = $RAC->get('/user/repos');
+```
+$response = $RAC->get('/user/repos');
+```
 
 #### To specify endpoint to GET PUT PATCH or DELETE method you can use parametr value argument
 ex.
-> $response = $RAC->get('/user/:id/repos', 123);
+```
+$response = $RAC->get('/user/:id/repos', 123);
+```
 
 #### GET method parameters
 * string  $resource must start with "/" ex. /products or /products/:id
