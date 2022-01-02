@@ -25,8 +25,8 @@ ex.
 $RAC = new RestApiClient("https://api.github.com");
 ```
 
-#### To add to header use addToHeader methods, 
-#### methods take two parameters Type and Value
+#### To add to header use addToHeader method, 
+#### method take two parameters Type and Value
 ex.
 ```
 $rac->addToHeader("User-Agent", "Test REST API Client");
