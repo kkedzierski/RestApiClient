@@ -57,7 +57,7 @@ $response = $RAC->get('/user/:id/repos', 123);
 #### GET method parameters
 * string  $resource must start with "/" ex. /products or /products/:id
 * string|int  $parameterValue parametr required if is specific in resource , default = ''
-* array   $additionalField ex. header, default = null
+* array|null   $additionalField ex. header, default = null
 
 #### POST method parameters
  * string       $resource must start with "/" ex. /products or /products/:id
@@ -73,7 +73,7 @@ $response = $RAC->get('/user/:id/repos', 123);
 #### DELETE method parameters
  * string  $resource must start with "/" ex. /products or /products/:id
  * string|int  $parameterValue parametr required if is specific in resource , default = ''
- * array   $additionalField ex. header
+ * array|null   $additionalField ex. header, default = null
 
 #### every methods return response object with methods
 * getUrl();
