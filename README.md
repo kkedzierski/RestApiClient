@@ -19,21 +19,19 @@ use RestApiClient\RestApiClient;
 require_once __DIR__ . './vendor/autoload.php';
 ```
 
-#### create instance of class with base URI
+#### And create instance of class with base URI
 ex.
 ```
 $RAC = new RestApiClient("https://api.github.com");
 ```
 
-#### To add to header use addToHeader method, 
-#### method take two parameters Type and Value
+#### To add to header use addToHeader method,method take two parameters Type and Value
 ex.
 ```
 $rac->addToHeader("User-Agent", "Test REST API Client");
 ```
 
-#### To add additonal parmeters like gets or header create array
-#### and add this array as an argument to request methods
+#### To add additonal parmeters like gets or header create array and add this array as an argument to request methods
 ex. array:
 ```
 $additonalParamArr = [
